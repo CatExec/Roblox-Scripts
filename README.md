@@ -1,4 +1,4 @@
-# Roblox-Scripts
+# Roblox-Scripts🐱
 A list of most scripts (xeno supported)
 
 What Is A Roblox Script?
@@ -12,3 +12,4 @@ if on android use Delta if on ios then you need scarlet when you got scarlet yse
 Enjoy
 https://www.youtube.com/@CatExec
 For Scripts Showcase!
+yes you can use solora but aslong as you dont care about getting hacked and banned use solora if you do care use Xeno 👍
