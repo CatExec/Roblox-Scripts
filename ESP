@@ -1,0 +1,111 @@
+-- Settings
+local enabled = true -- Toggle to enable or disable the effect
+local updateInterval = 1 -- Refresh every 1 second
+
+-- Services
+local players = game:GetService("Players")
+local localPlayer = players.LocalPlayer
+local camera = game:GetService("Workspace").CurrentCamera
+
+-- Function to create selection box
+local function createSelectionBox(target)
+    local selectionBox = Instance.new("SelectionBox")
+    selectionBox.Adornee = target
+    selectionBox.Color3 = Color3.new(0, 1, 0) -- Green color
+    selectionBox.LineThickness = 0.05
+    selectionBox.SurfaceTransparency = 0.5
+    selectionBox.Parent = target
+    return selectionBox
+end
+
+-- Function to create name label
+local function createNameLabel(player)
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Name = "NameTag"
+    billboardGui.Size = UDim2.new(0, 200, 0, 50)
+    billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    billboardGui.Adornee = player.Character:FindFirstChild("Head")
+    billboardGui.AlwaysOnTop = true
+
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.new(1, 1, 1)
+    textLabel.TextStrokeTransparency = 0
+    textLabel.TextScaled = true
+    textLabel.Font = Enum.Font.SourceSansBold
+    textLabel.Text = player.Name
+    textLabel.Parent = billboardGui
+
+    billboardGui.Parent = player.Character
+    return billboardGui
+end
+
+-- Function to update name size based on distance
+local function updateNameSize(billboardGui, distance)
+    local size = math.clamp(10 / distance, 0.5, 2) -- Adjust size based on distance
+    billboardGui.Size = UDim2.new(0, 200 * size, 0, 50 * size)
+end
+
+-- Function to refresh highlights and names
+local function refreshHighlights()
+    for _, player in pairs(players:GetPlayers()) do
+        if player ~= localPlayer and player.Character and player.Character:FindFirstChild("Head") then
+            -- Remove existing selection boxes and name labels
+            if player.Character:FindFirstChild("PlayerHighlight") then
+                player.Character.PlayerHighlight:Destroy()
+            end
+            if player.Character:FindFirstChild("NameTag") then
+                player.Character.NameTag:Destroy()
+            end
+
+            -- Recreate selection box
+            local selectionBox = createSelectionBox(player.Character)
+            selectionBox.Name = "PlayerHighlight"
+            -- Recreate name label
+            local nameLabel = createNameLabel(player)
+            nameLabel.Name = "PlayerNameLabel"
+        end
+    end
+    print("www.youtube.com/@CatExec") -- Print on refresh
+end
+
+-- Function to toggle highlights
+local function toggleHighlights(state)
+    if state then
+        refreshHighlights()
+    else
+        for _, player in pairs(players:GetPlayers()) do
+            if player.Character then
+                if player.Character:FindFirstChild("PlayerHighlight") then
+                    player.Character.PlayerHighlight:Destroy()
+                end
+                if player.Character:FindFirstChild("NameTag") then
+                    player.Character.NameTag:Destroy()
+                end
+            end
+        end
+    end
+end
+
+-- Continuous refresh loop
+spawn(function()
+    while true do
+        if enabled then
+            refreshHighlights()
+        end
+        wait(updateInterval)
+    end
+end)
+
+-- Initial toggle
+toggleHighlights(enabled)
+
+-- Toggle with a key (e.g., "Z")
+local UserInputService = game:GetService("UserInputService")
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.Z then
+        enabled = not enabled
+        toggleHighlights(enabled)
+    end
+end)
